@@ -18,19 +18,22 @@ func TestArea(t *testing.T) {
 	// if you want to test different implementations of an interface, or it the data being passed
 	// in to a function has lots of different requirements that need testing then Table driven tests are a great fit
 	areaTests := []struct {
-		shape Shape
-		want  float64
+		name    string
+		shape   Shape
+		hasArea float64
 	}{
-		{Rectangle{12, 6}, 72.0},
-		{Circle{10}, 314.1592653589793},
-		{Triangle{12, 6}, 36.0},
+		{name: "rectangle", shape: Rectangle{Length: 12, Width: 6}, hasArea: 72.0},
+		{name: "circle", shape: Circle{Radius: 10}, hasArea: 314.1592653589793},
+		{name: "triangle", shape: Triangle{Base: 12, Height: 6}, hasArea: 36.0},
 	}
 
 	for _, tt := range areaTests {
-		got := tt.shape.Area()
-		if got != tt.want {
-			t.Errorf("got %g, want %g", got, tt.want)
-		}
+		t.Run(tt.name, func(t *testing.T) {
+			got := tt.shape.Area()
+			if got != tt.hasArea {
+				t.Errorf("%#v got %g, want %g", tt.shape, got, tt.hasArea)
+			}
+		})
 	}
 }
 
