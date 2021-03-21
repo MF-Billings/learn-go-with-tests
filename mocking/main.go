@@ -18,15 +18,6 @@ func (d *DefaultSleeper) Sleep() {
 	time.Sleep(1 * time.Second)
 }
 
-// SpySleeper tracks how many times Sleep() is called so it can be checked in tests
-type SpySleeper struct {
-	Calls int
-}
-
-func (s *SpySleeper) Sleep() {
-	s.Calls++
-}
-
 // CountdownOperationsSpy implements Sleeper and io.Writer, recording every call
 type CountdownOperationsSpy struct {
 	Calls []string
