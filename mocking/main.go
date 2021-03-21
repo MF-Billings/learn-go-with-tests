@@ -27,6 +27,23 @@ func (s *SpySleeper) Sleep() {
 	s.Calls++
 }
 
+// CountdownOperationsSpy implements Sleeper and io.Writer, recording every call
+type CountdownOperationsSpy struct {
+	Calls []string
+}
+
+func (c *CountdownOperationsSpy) Sleep() {
+	c.Calls = append(c.Calls, sleep)
+}
+
+func (c *CountdownOperationsSpy) Write(p []byte) (n int, err error) {
+	c.Calls = append(c.Calls, write)
+	return
+}
+
+const sleep = "sleep"
+const write = "write"
+
 const finalWord = "Go!"
 const countdownStart = 3
 
