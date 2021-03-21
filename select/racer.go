@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"time"
 )
@@ -18,4 +19,8 @@ func Racer(url1, url2 string) (winner string) {
 		return url1
 	}
 	return url2
+}
+
+func main() {
+	fmt.Printf("winner: %s", Racer("http://www.facebook.com", "http://www.quii.co.uk"))
 }
