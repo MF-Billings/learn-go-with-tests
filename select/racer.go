@@ -3,22 +3,27 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"time"
 )
 
 // Racer takes 2 URLs and sends both HTTP GET requests, returning the URL which returned first.
 func Racer(url1, url2 string) (winner string) {
-	if responseTime(url1) < responseTime(url2) {
+	// select lets you wait on multiple channels.  The first one to send a value "wins" and the code underneath thhe case is executed.
+	select {
+	case <-ping(url1):
 		return url1
+	case <-ping(url2):
+		return url2
 	}
-	return url2
 }
 
-func responseTime(url string) time.Duration {
-	start := time.Now()
-	http.Get(url)
-	timeTaken := time.Since(start)
-	return timeTaken
+func ping(url string) chan struct{} {
+	// don't care why type is sent to the channel, just that there's a signal when it's done and closing the channel fits the bill
+	ch := make(chan struct{})
+	go func() {
+		http.Get(url)
+		close(ch)
+	}()
+	return ch
 }
 
 func main() {
