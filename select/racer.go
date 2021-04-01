@@ -3,16 +3,24 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"time"
 )
 
+var tenSecondTimeout = 10 * time.Second
+
 // Racer takes 2 URLs and sends both HTTP GET requests, returning the URL which returned first.
-func Racer(url1, url2 string) (winner string) {
-	// select lets you wait on multiple channels.  The first one to send a value "wins" and the code underneath thhe case is executed.
+func Racer(url1, url2 string) (winner string, err error) {
+	return ConfigurableRacer(url1, url2, tenSecondTimeout)
+}
+
+func ConfigurableRacer(a, b string, timeout time.Duration) (winner string, err error) {
 	select {
-	case <-ping(url1):
-		return url1
-	case <-ping(url2):
-		return url2
+	case <-ping(a):
+		return a, nil
+	case <-ping(b):
+		return b, nil
+	case <-time.After(timeout):
+		return "", fmt.Errorf("timed out waiting for %s and %s", a, b)
 	}
 }
 
@@ -27,5 +35,6 @@ func ping(url string) chan struct{} {
 }
 
 func main() {
-	fmt.Printf("winner: %s", Racer("http://www.facebook.com", "http://www.quii.co.uk"))
+	winner, _ := Racer("http://www.facebook.com", "http://www.quii.co.uk")
+	fmt.Printf("winner: %s", winner)
 }
